@@ -10,13 +10,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok(v) => {
             start_test(parse_countries(v));
             Ok(())
-        },
-        Err(_) => Err("bad request")?
-    }
+        }
+        Err(_) => Err("bad request")?,
+    };
 }
 
 async fn get_countries<'a>() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
-
     // Pull down list of sovereign states from Wikipedia
     let body = reqwest::get("https://en.wikipedia.org/wiki/List_of_sovereign_states")
         .await?
@@ -29,7 +28,15 @@ async fn get_countries<'a>() -> Result<Vec<Country>, Box<dyn std::error::Error>>
 
     // Exclude some values
     let mut countries = Vec::new();
-    let exclusions = vec!["List_of_states", "Other_states", "Criteria_for_inclusion", "See_also", "Notes", "References", "Bibliography"];
+    let exclusions = vec![
+        "List_of_states",
+        "Other_states",
+        "Criteria_for_inclusion",
+        "See_also",
+        "Notes",
+        "References",
+        "Bibliography",
+    ];
 
     for element in fragment.select(&selector) {
         let country = element.value().attr("id");
@@ -39,8 +46,8 @@ async fn get_countries<'a>() -> Result<Vec<Country>, Box<dyn std::error::Error>>
                 if !exclusions.iter().any(|&v| v == c) {
                     countries.push(String::from(c))
                 }
-            },
-            None => {},
+            }
+            None => {}
         }
     }
 
@@ -78,4 +85,3 @@ fn parse_countries(countries: Vec<Country>) -> Vec<Country> {
 
     countries_parsed
 }
-
