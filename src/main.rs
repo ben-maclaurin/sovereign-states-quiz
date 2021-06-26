@@ -5,14 +5,15 @@ use std::io;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use warp::Filter;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 struct Country {
     name: String,
 }
 
 #[tokio::main]
 async fn main() {
-    let route = warp::path("countries").map(|| warp::reply::json(&get_countries()));
+    let parsed_countries = parse_countries(get_countries().await.unwrap());
+    let route = warp::path("countries").map(move || warp::reply::json(&parsed_countries));
 
     let server = warp::serve(route);
 
@@ -62,7 +63,7 @@ async fn get_countries() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
         }
     }
 
-    Ok(parse_countries(countries))
+    Ok(countries)
 }
 
 fn parse_countries(countries: Vec<Country>) -> Vec<Country> {
