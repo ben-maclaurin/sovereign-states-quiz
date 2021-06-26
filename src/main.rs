@@ -65,6 +65,22 @@ async fn get_countries() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
     Ok(parse_countries(countries))
 }
 
+fn parse_countries(countries: Vec<Country>) -> Vec<Country> {
+    let mut countries_parsed = Vec::<Country>::new();
+
+    for country in countries {
+        if country.name.contains("_") {
+            countries_parsed.push(Country {
+                name: country.name.replace("_", " "),
+            });
+        } else {
+            countries_parsed.push(country);
+        }
+    }
+
+    countries_parsed
+}
+
 // CLI verison of the app (swap warp server for this if running CLI-only)
 fn start_test(countries: Vec<Country>) -> io::Result<()> {
     for (i, country) in countries.iter().enumerate() {
@@ -82,20 +98,4 @@ fn start_test(countries: Vec<Country>) -> io::Result<()> {
     }
 
     Ok(())
-}
-
-fn parse_countries(countries: Vec<Country>) -> Vec<Country> {
-    let mut countries_parsed = Vec::<Country>::new();
-
-    for country in countries {
-        if country.name.contains("_") {
-            countries_parsed.push(Country {
-                name: country.name.replace("_", " "),
-            });
-        } else {
-            countries_parsed.push(country);
-        }
-    }
-
-    countries_parsed
 }
