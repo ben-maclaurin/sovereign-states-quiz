@@ -1,26 +1,27 @@
 #![feature(string_remove_matches)]
 use scraper::{Html, Selector};
+use serde::{Deserialize, Serialize};
 use std::io;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-use warp::{Filter};
-use serde::{Serialize, Deserialize};
+use warp::Filter;
 
 #[derive(Serialize, Deserialize)]
 struct Country {
-    name: String
+    name: String,
 }
 
 #[tokio::main]
 async fn main() {
+    let route = warp::path("countries").map(|| warp::reply::json(&get_countries()));
 
-    let route = warp::path("countries")
-        .map(|| {
-            warp::reply::json(&get_countries())
-        });
+    let server = warp::serve(route);
 
-        let server = warp::serve(route);
-
-        server.run(SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080)).await;
+    server
+        .run(SocketAddr::new(
+            IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)),
+            8080,
+        ))
+        .await;
 }
 
 async fn get_countries() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
@@ -53,7 +54,7 @@ async fn get_countries() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
                 // If we find an id match, check it against list of exclusions
                 if !exclusions.iter().any(|&v| v == c) {
                     countries.push(Country {
-                        name: String::from(c)
+                        name: String::from(c),
                     })
                 }
             }
@@ -64,6 +65,7 @@ async fn get_countries() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
     Ok(parse_countries(countries))
 }
 
+// CLI verison of the app (swap warp server for this if running CLI-only)
 fn start_test(countries: Vec<Country>) -> io::Result<()> {
     for (i, country) in countries.iter().enumerate() {
         let mut input = String::new();
@@ -87,11 +89,9 @@ fn parse_countries(countries: Vec<Country>) -> Vec<Country> {
 
     for country in countries {
         if country.name.contains("_") {
-            countries_parsed.push(
-                Country {
-                    name: country.name.replace("_", " ")
-                }
-                );
+            countries_parsed.push(Country {
+                name: country.name.replace("_", " "),
+            });
         } else {
             countries_parsed.push(country);
         }
