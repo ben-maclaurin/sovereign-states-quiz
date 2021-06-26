@@ -1,5 +1,6 @@
 #![feature(string_remove_matches)]
 use scraper::{Html, Selector};
+use warp::{Filter, http::Response}
 use std::io;
 
 type Country = String;
@@ -15,7 +16,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 }
 
-async fn get_countries<'a>() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
+async fn get_countries() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
     // Pull down list of sovereign states from Wikipedia
     let body = reqwest::get("https://en.wikipedia.org/wiki/List_of_sovereign_states")
         .await?
