@@ -1,0 +1,8 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ben-maclaurin/sovereign-states-quiz.git",
+  "author": "ben@thedesigncollaborative.co <ben@thedesigncollaborative.co>",
+  "license": "MIT"
+}
