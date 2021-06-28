@@ -20,18 +20,20 @@
 </script>
 
 <script>
-	export let countries;
+		export let countries;
+
+		let country = countries[0];
+		let response = '';
+
+
+
 </script>
 
 
 <svelte:head>
-				<title>Welcome</title>
+	<title>Welcome</title>
 </svelte:head>
 
-<ul>
-	{#each countries as country}
-		<li>{country.name}</li>
-	{/each}
-</ul>
-
-
+<h1>{country.name}</h1>
+<input bind:value={response} />
+<p>{response}</p>
