@@ -3,7 +3,7 @@ use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
 use std::io;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-use warp::Filter;
+use warp::{filters::BoxedFilter, Filter, Reply};
 
 #[derive(Clone, Serialize, Deserialize)]
 struct Country {
@@ -12,10 +12,7 @@ struct Country {
 
 #[tokio::main]
 async fn main() {
-    let parsed_countries = parse_countries(get_countries().await.unwrap());
-    let route = warp::path("countries").map(move || warp::reply::json(&parsed_countries));
-
-    let server = warp::serve(route);
+    let server = warp::serve(countries_filter().await);
 
     server
         .run(SocketAddr::new(
@@ -23,6 +20,13 @@ async fn main() {
             8080,
         ))
         .await;
+}
+
+async fn countries_filter() -> BoxedFilter<(impl Reply,)> {
+    let parsed_countries = parse_countries(get_countries().await.unwrap());
+    warp::path("countries")
+        .map(move || warp::reply::json(&parsed_countries))
+        .boxed()
 }
 
 async fn get_countries() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
@@ -100,3 +104,4 @@ fn start_test(countries: Vec<Country>) -> io::Result<()> {
 
     Ok(())
 }
+
