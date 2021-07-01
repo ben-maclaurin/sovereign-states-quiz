@@ -55,7 +55,7 @@
 
 <div class="font-mono space-y-4 p-12">
 	<p class="text-xl">learn countries a-z</p>
-	<input on:input={() => onInput()} class="h-12 placeholder-gray-400 focus:outline-none" placeholder="enter country ..." bind:value={response} />
+	<input class="h-12 placeholder-gray-400 focus:outline-none" placeholder="enter country ..." bind:value={response} />
 	<p on:click={() => showAnswer()} class="text-blue-700 cursor-pointer">show answer</p>
 	<p>{answer}</p>
 	<ul class="text-sm grid grid-cols-3">
