@@ -22,10 +22,17 @@
 <script>
 		export let countries;
 
-		let country = countries[0];
 		let response = '';
+		let count = 0;
 
+			const handleKeydown = (e) => {
+					let keyCode = e.keyCode;
 
+					if (e.keyCode === 13 && response.toLowerCase() === countries[count].name.toLowerCase()) {
+							response = ''
+							count++
+						}
+				}
 
 </script>
 
@@ -34,6 +41,7 @@
 	<title>Welcome</title>
 </svelte:head>
 
-<h1>{country.name}</h1>
+<svelte:window on:keydown={handleKeydown} />
+
 <input bind:value={response} />
-<p>{response}</p>
+<p>{count}</p>
