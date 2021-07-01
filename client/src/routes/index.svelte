@@ -55,6 +55,7 @@
 <svelte:window on:keydown={handleKeydown}/>
 
 <div class="font-mono space-y-4 p-12">
+    <img width=120 class="pb-4" src="world.jpg" />
     <p class="text-xl">learn countries a-z</p>
     <input class="h-12 placeholder-gray-400 focus:outline-none" placeholder="enter country ..." bind:value={response}/>
     <p on:click={() => showAnswer()} class="text-blue-700 cursor-pointer">show answer</p>
