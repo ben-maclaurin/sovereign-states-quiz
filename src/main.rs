@@ -11,7 +11,7 @@ struct Country {
 }
 
 impl Country {
-    fn parse(&mut self) -> Self {
+    fn parse(&self) -> Self {
         if self.name.contains("_") {
             Self {
                 name: String::from(&self.name.replace("_", " ")),
@@ -87,7 +87,7 @@ async fn get_countries() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
 fn parse_countries(countries: Vec<Country>) -> Vec<Country> {
     let mut countries_parsed = Vec::<Country>::new();
 
-    for mut country in countries {
+    for country in countries {
         countries_parsed.push(country.parse());
     }
 
@@ -113,4 +113,3 @@ fn start_test(countries: Vec<Country>) -> io::Result<()> {
 
     Ok(())
 }
-
