@@ -10,6 +10,20 @@ struct Country {
     name: String,
 }
 
+impl Country {
+    fn parse(&mut self) -> Self {
+        if self.name.contains("_") {
+            Self {
+                name: String::from(&self.name.replace("_", " ")),
+            }
+        } else {
+            Self {
+                name: String::from(&self.name),
+            }
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let server = warp::serve(countries_filter().await);
@@ -73,20 +87,15 @@ async fn get_countries() -> Result<Vec<Country>, Box<dyn std::error::Error>> {
 fn parse_countries(countries: Vec<Country>) -> Vec<Country> {
     let mut countries_parsed = Vec::<Country>::new();
 
-    for country in countries {
-        if country.name.contains("_") {
-            countries_parsed.push(Country {
-                name: country.name.replace("_", " "),
-            });
-        } else {
-            countries_parsed.push(country);
-        }
+    for mut country in countries {
+        countries_parsed.push(country.parse());
     }
 
     countries_parsed
 }
 
 // CLI verison of the app (swap warp server for this if running CLI-only)
+#[allow(dead_code)]
 fn start_test(countries: Vec<Country>) -> io::Result<()> {
     for (i, country) in countries.iter().enumerate() {
         let mut input = String::new();
